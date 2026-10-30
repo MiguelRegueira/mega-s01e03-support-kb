@@ -1,0 +1,48 @@
+---
+layout: runbook
+title: '#4471 · split the date reports by cause'
+owner: support desk
+status: proposed
+reviewed: 2026-10-30
+signature: 'Codex, for Miguel Regueira'
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  const signature = metadata.signature;
+</script>
+
+The desk merged reports about wrong booking dates into #4471. The subject alone does not
+establish a shared cause. The table classifies distinct reports in the export using the
+tenant's locale, booking form and channel. It is a snapshot, not the live queue.
+
+## Two problems
+
+- **Parser:** the shared parser reads dates month first even when a tenant uses day-first
+  dates. A valid date can silently become a different day and month.
+- **Form hint:** booking-v3 tells people to type month first, while its day-first tenant
+  forms interpret the entry day first. Give this problem its own engineering ticket.
+
+The desk noted that some reports appeared to describe a one-day move. The table identifies
+how many; investigate those symptoms rather than assuming the classification proves their
+underlying cause.
+
+<CauseTable ticket={4471} />
+
+## What changed over time
+
+The bars show when reports were received and when they were merged. They describe desk
+activity in the export, not a deployment date or proof that either problem is fixed.
+
+<QueueTimeline ticket={4471} />
+
+## Triage going forward
+
+Compare causes using tenant locale, booking form and channel, and read the report when the
+cause is uncertain. Matching subjects can hide different problems; different subjects can
+describe the same problem. The accepted subject-only decision remains historical; a new
+decision is needed to replace it. Check current queue data before relying on these counts.
+
+<RenderStamp {signature} />
